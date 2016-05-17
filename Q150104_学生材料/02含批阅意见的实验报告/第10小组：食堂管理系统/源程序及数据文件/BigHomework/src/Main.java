@@ -14,7 +14,6 @@ class MainFrame extends JFrame {
 	
 	MainFrame(){
 		super("食堂信息管理系统");
-		
 		this.setTitle("食堂信息管理系统");
 		this.setSize(700,320);
 		this.setResizable(false);
@@ -44,6 +43,7 @@ class MainFrame extends JFrame {
 				canteen.setCanteenNo(temp[0]);
 				canteen.setCanteenName(temp[1]);
 				canteen.setCanteenLocation(temp[2]);
+				canteen.setManager(temp[3]);
 				canteenList.add(canteen);
 			}
 		} catch (IOException e) {
@@ -64,32 +64,39 @@ class MainFrame extends JFrame {
 
 class CanteenPanel extends JPanel {
 	private JTextField canteenNo=new JTextField();											//编号
-	private JTextField canteenName=new JTextField();										//食堂名称
-	private JTextField canteenLocation=new JTextField();									//食堂地址									
+	private JTextField canteenName=new JTextField();										//窗口名称
+	private JTextField canteenLocation=new JTextField();									//窗口位置			
+	private JTextField manager=new JTextField();											//负责人
 	static Vector canteenList=new Vector();
 	private String[] btnStr={"第一个","上一个","下一个","最后一个","添加","修改","删除"};
 	private JButton[] btn= new JButton[btnStr.length];
 	
 	CanteenPanel(){
 		this.setLayout(null);
-		//编号
-		JLabel lb1=new JLabel("编号：");
+		//窗口编号
+		JLabel lb1=new JLabel("窗口编号：");
 		lb1.setBounds(30, 10, 100, 20);
 		this.add(lb1);
 		canteenNo.setBounds(100,10, 100, 20);
 		this.add(canteenNo);
-		//食堂名称
-		JLabel lb2=new JLabel("食堂名称：");
+		//窗口名称
+		JLabel lb2=new JLabel("窗口名称：");
 		lb2.setBounds(30, 60, 100, 20);
 		this.add(lb2);
 		canteenName.setBounds(100,60, 100, 20);
 		this.add(canteenName);
-		//食堂地址
-		JLabel lb3=new JLabel("食堂地址：");
+		//窗口位置
+		JLabel lb3=new JLabel("窗口位置：");
 		lb3.setBounds(30, 110, 100, 20);
 		this.add(lb3);
 		canteenLocation.setBounds(100,110, 100, 20);
 		this.add(canteenLocation);
+		//负责人
+		JLabel lb4=new JLabel("负责人：");
+		lb4.setBounds(30, 160, 100, 20);
+		this.add(lb4);
+		manager.setBounds(100,160, 100, 20);
+		this.add(manager);
 
 		for(int i=0;i<btn.length;i++){
 			btn[i]=new JButton(btnStr[i]);
@@ -104,6 +111,7 @@ class CanteenPanel extends JPanel {
 		this.canteenNo.setText(canteen.getCanteenNo());
 		this.canteenName.setText(canteen.getCanteenName());
 		this.canteenLocation.setText(canteen.getCanteenLocation());	
+		this.manager.setText(canteen.getManager());
 	}
 }
 
@@ -111,6 +119,7 @@ class Canteen {
 	public String canteenNo;										//编号
 	public String canteenName;										//名称
 	public String canteenLocation;									//地址
+	public String manager;											//负责人
 	public String getCanteenNo() {
 		return canteenNo;
 	}
@@ -128,6 +137,12 @@ class Canteen {
 	}
 	public void setCanteenLocation(String canteenLocation) {
 		this.canteenLocation = canteenLocation;
+	}
+	public String getManager() {
+		return manager;
+	}
+	public void setManager(String manager) {
+		this.manager = manager;
 	}
 	
 }
