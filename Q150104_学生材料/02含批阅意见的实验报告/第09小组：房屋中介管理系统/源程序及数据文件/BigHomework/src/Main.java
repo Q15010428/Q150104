@@ -60,13 +60,14 @@ class MainFrame extends JFrame {
 	}
 }
 
-class ComPanel extends JPanel {
+class ComPanel extends JPanel implements ActionListener{
 	private JTextField comID=new JTextField();
 	private JTextField comName=new JTextField();
 	private JTextField comAddress=new JTextField();
 	Vector comList=new Vector();													
 	private String[] btnStr={"第一个","上一个","下一个","最后一个","添加","修改","删除"};
 	private JButton[] btn= new JButton[btnStr.length];
+	int count=0,current=0,inserting=0;
 	
 	ComPanel(){
 		comID.setFont(new Font(null,Font.BOLD,15));
@@ -99,7 +100,7 @@ class ComPanel extends JPanel {
 			btn[i]=new JButton(btnStr[i]);
 			btn[i].setBounds(30+i*90, 210, 90, 30);
 			this.add(btn[i]);
-//			btn[i].addActionListener(this);
+			btn[i].addActionListener(this);
 		}
 	}
 
@@ -111,7 +112,93 @@ class ComPanel extends JPanel {
 		this.comAddress.setText(com.getComAddress());		
 	}
 
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO 自动生成的方法存根
+		count=this.comList.size();
+		if(e.getSource()==this.btn[0]){
+			this.showCommunity(0);
+			current=0;
+		}
+		if(e.getSource()==this.btn[1] && current>0){
+			this.showCommunity(current-1);
+			current=current-1;
+		}
+		if(e.getSource()==this.btn[2] && current<count-1){
+			this.showCommunity(current+1);
+			current=current+1;
+		}
+		if(e.getSource()==this.btn[3]){
+			this.showCommunity(count-1);
+			current=count-1;
+		}
+		if(e.getSource()==this.btn[4]){
+			if(this.inserting==0){
+				this.comID.setText("");
+				this.comName.setText("");
+				this.comAddress.setText("");
+				btn[4].setText("保存");
+				btn[5].setText("取消");
+				this.inserting=1;
+			}else{
+				Community com=new Community();
+				com.setComID(this.comID.getText().trim());
+				com.setComName(this.comName.getText().trim());
+				com.setComAddress(this.comAddress.getText().trim());
+				comList.add(com);
+				count++;
+				current=count-1;
+				btn[4].setText("添加");
+				btn[5].setText("修改");
+				this.inserting=0;
+			}
+			for(int i=0;i<btn.length;i++){
+				if(i==4||i==5) continue;
+				btn[i].setEnabled(!btn[i].isEnabled());
+			}
+		}
+
+		if(e.getSource()==this.btn[5]){
+			if(this.inserting==0){
+				Community com=(Community)comList.get(current);
+				com.setComID(this.comID.getText().trim());
+				com.setComName(this.comName.getText().trim());
+				com.setComAddress(this.comAddress.getText().trim());
+			}else{
+				btn[4].setText("添加");
+				btn[5].setText("修改");
+				for(int i=0;i<btn.length;i++){
+					if(i==4||i==5) continue;
+					btn[i].setEnabled(!btn[i].isEnabled());
+				}
+				this.inserting=0;
+				this.showCommunity(current);
+			}
+		}
+		if(e.getSource()==this.btn[6]){
+			if(count==0)
+				return;
+			comList.remove(current);
+			count--;
+			if(count==0){
+				this.comID.setText("");
+				this.comName.setText("");
+				this.comAddress.setText("");
+			}else{
+				if(current>count-1){
+					this.showCommunity(current-1);
+					current=current-1;
+				}
+				else
+					this.showCommunity(current);
+			}
+		}
+		this.repaint();
+	}
 }
+
+
 
 class Community {
 	private String comID;
