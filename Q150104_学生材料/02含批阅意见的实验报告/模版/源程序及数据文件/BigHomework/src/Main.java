@@ -1,6 +1,9 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Vector;
+
 import javax.swing.*;
 
 public class Main{
@@ -63,7 +66,7 @@ class MainFrame extends JFrame {
 	}
 }
 
-class StuPanel extends JPanel {
+class StuPanel extends JPanel implements ActionListener {
 	private JTextField stuNo=new JTextField();											//学号
 	private JTextField stuName=new JTextField();										//姓名
 	private JTextField stuSex=new JTextField();											//性别
@@ -71,6 +74,7 @@ class StuPanel extends JPanel {
 	Vector stuList=new Vector();
 	private String[] btnStr={"第一个","上一个","下一个","最后一个","添加","修改","删除"};
 	private JButton[] btn= new JButton[btnStr.length];
+	int count=0,current=0,inserting=0;
 	
 	StuPanel(){
 		this.setLayout(null);
@@ -102,6 +106,7 @@ class StuPanel extends JPanel {
 		for(int i=0;i<btn.length;i++){
 			btn[i]=new JButton(btnStr[i]);
 			btn[i].setBounds(30+i*90, 210, 90, 30);
+			btn[i].addActionListener(this);
 			this.add(btn[i]);
 		}
 	}
@@ -112,6 +117,92 @@ class StuPanel extends JPanel {
 		this.stuName.setText(stu.getStuName());
 		this.stuSex.setText(stu.getStuSex());
 		this.stuBirthday.setText(stu.getStuBirthday());
+	}
+
+	public void actionPerformed(ActionEvent e) {
+		count=this.stuList.size();
+		if(e.getSource()==this.btn[0]){
+			this.showStudent(0);
+			current=0;
+		}
+		if(e.getSource()==this.btn[1] && current>0){
+			this.showStudent(current-1);
+			current=current-1;
+		}
+		if(e.getSource()==this.btn[2] && current<count-1){
+			this.showStudent(current+1);
+			current=current+1;
+		}
+		if(e.getSource()==this.btn[3]){
+			this.showStudent(count-1);
+			current=count-1;
+		}
+		if(e.getSource()==this.btn[4]){
+			if(this.inserting==0){
+				this.stuNo.setText("");
+				this.stuName.setText("");
+				this.stuSex.setText("");
+				this.stuBirthday.setText("");
+				btn[4].setText("保存");
+				btn[5].setText("取消");
+				this.inserting=1;
+			}else{
+				Student stu=new Student();
+				stu.setStuNo(this.stuNo.getText().trim());
+				stu.setStuName(this.stuName.getText().trim());
+				stu.setStuSex(this.stuSex.getText().trim());
+				stu.setStuBirthday(this.stuBirthday.getText().trim());
+				stuList.add(stu);
+				count++;
+				current=count-1;
+				btn[4].setText("添加");
+				btn[5].setText("修改");
+				this.inserting=0;
+			}
+			for(int i=0;i<btn.length;i++){
+				if(i==4||i==5) continue;
+				btn[i].setEnabled(!btn[i].isEnabled());
+			}
+		}
+
+		if(e.getSource()==this.btn[5]){
+			if(this.inserting==0){
+				Student stu=(Student)stuList.get(current);
+				stu.setStuNo(this.stuNo.getText().trim());
+				stu.setStuName(this.stuName.getText().trim());
+				stu.setStuSex(this.stuSex.getText().trim());
+				stu.setStuBirthday(this.stuBirthday.getText().trim());
+			}else{
+				btn[4].setText("添加");
+				btn[5].setText("修改");
+				for(int i=0;i<btn.length;i++){
+					if(i==4||i==5) continue;
+					btn[i].setEnabled(!btn[i].isEnabled());
+				}
+				this.inserting=0;
+				this.showStudent(current);
+			}
+		}
+		if(e.getSource()==this.btn[6]){
+			if(count==0)
+				return;
+			stuList.remove(current);
+			count--;
+			if(count==0){
+				this.stuNo.setText("");
+				this.stuName.setText("");
+				this.stuSex.setText("");
+				this.stuBirthday.setText("");
+			}else{
+				if(current>count-1){
+					this.showStudent(current-1);
+					current=current-1;
+				}
+				else
+					this.showStudent(current);
+			}
+		}
+		this.repaint();
 	}
 }
 
@@ -144,5 +235,62 @@ class Student {
 	}
 	public void setStuBirthday(String stuBirthday) {
 		this.stuBirthday = stuBirthday;
+	}
+}
+
+class Course{
+	private String courseNo;										//课程编号
+	private String courseName;									//课程名称
+	private double courseScore;								//课程学分
+	private String teacher;											//任课教师
+	
+	public String getCourseNo() {
+		return courseNo;
+	}
+	public void setCourseNo(String courseNo) {
+		this.courseNo = courseNo;
+	}
+	public String getCourseName() {
+		return courseName;
+	}
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
+	public double getCourseScore() {
+		return courseScore;
+	}
+	public void setCourseScore(double courseScore) {
+		this.courseScore = courseScore;
+	}
+	public String getTeacher() {
+		return teacher;
+	}
+	public void setTeacher(String teacher) {
+		this.teacher = teacher;
+	}
+}
+
+class Score{
+	private String stuNo;											//学号
+	private String courseNo;										//课程代号
+	private double score;											//成绩
+	
+	public String getStuNo() {
+		return stuNo;
+	}
+	public void setStuNo(String stuNo) {
+		this.stuNo = stuNo;
+	}
+	public String getCourseNo() {
+		return courseNo;
+	}
+	public void setCourseNo(String courseNo) {
+		this.courseNo = courseNo;
+	}
+	public double getScore() {
+		return score;
+	}
+	public void setScore(double score) {
+		this.score = score;
 	}
 }
